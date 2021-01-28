@@ -11,6 +11,7 @@ module.exports = (opts) => {
         prompt:   '', 
         userpass: [],
         clients:  {}, 
+        interactive: false, 
         start:    () => {
 			console.log("[rshell] for terminal access run: $ curl -sSNT. localhost:"+rshell.port+" -u username:password")
             enabled = true
@@ -33,9 +34,10 @@ module.exports = (opts) => {
 			if( !enabled                    ) return next()
 			if( !rshell.allowed(req,res)    ) return next()
 			if( !rshell.auth(req,res)       ) return next()
-			console.log("rshell connection "+req.socket.remotePort+" started")
+            let id = req.socket.remotePort
+			console.log("rshell connection "+id+" started")
 
-            rshell.clients[req.socket.remotePort] = {req,res}  
+            rshell.clients[id] = {req,res,id,stdout: !rshell.interactive, stderr: !rshell.interactive }  
 			res.setHeader('content-type', 'multipart/octet-stream')
 			res.write( rshell.welcome )
 			repl.start({
@@ -46,23 +48,24 @@ module.exports = (opts) => {
 			  useColors: true, 
 			  useGlobal: false, 
 			  writer: rshell.format, 
-			  eval: (cmd, context, file, cb) => rshell.oncmd({cmd, ctx:()=>ctx, file, cb, req:()=>req, res:()=>res})
+			  eval: (cmd, context, file, cb) => rshell.oncmd({cmd, id, ctx:()=>ctx, file, cb, req:()=>req, res:()=>res})
 			})
 
 			// hack to thread stdin and stdout
 			// simultaneously in curl's single thread
-			/* TODO
-			var iv = setInterval(function () {
-			  if( enabled ) res.write(String.fromCharCode(0))
-			}, 100)
-			*/
 			var iv
+            if( rshell.interactive ){
+                var c = new Buffer([0])
+                iv = setInterval(function () {
+                  if( enabled ) res.write(c)//String.fromCharCode(0))
+                }, 100)
+            }
             
 			res.connection.on('end', function (iv, req,res) {
               let id = req.socket.remotePort
               delete rshell.clients[id]
 			  console.log("rshell connection "+id+" ended")
-			  //clearInterval(iv)
+			  if( rshell.interactive ) clearInterval(iv)
 			}.bind(this,iv,req,res))
 
 		}, 
