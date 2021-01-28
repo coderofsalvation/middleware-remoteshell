@@ -16,7 +16,7 @@ app.js:
 +   const rshell = require('./..')({
 +   	port,
 +   	welcome:  `welcome..beep..boop..\n\n`,
-+   	userpass: ['admin:admin', 'john:doe'],  
++   	userpass: process.env.shellusers.split(","),
 +   	allowed: (req,res) => String(req.headers['user-agent']).match(/curl\//) && rshell.userpass.length
 +   })
 +   
@@ -41,7 +41,7 @@ app.js:
 > Simple HTTP let's anybody see the username/password (oops!). 
 
 ```
-$ node app.js
+$ RSHELL_USERS="admin:admin,john:doe" node app.js
 listening at 8080
 [rshell] for terminal access run: $ curl -sSNT. localhost:8080 -u username:password 
 ```
