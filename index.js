@@ -12,14 +12,8 @@ module.exports = (opts) => {
         userpass: [],
         clients:  {}, 
         interactive: false, 
-        start:    () => {
-			console.log("[rshell] for terminal access run: $ curl -sSNT. localhost:"+rshell.port+" -u username:password")
-            enabled = true
-        }, 
-        stop: () => {
-            console.log("[rshell] disabled")
-			enabled = false
-        }, 
+        start:    () => enabled = true, 
+        stop:     () => enabled = false, 
 		format: (out) => out, 
 		oncmd: (i) => {
 			console.log("rshell cmd: "+i.cmd)

@@ -3,7 +3,7 @@
 allow developers to tail logs remotely using curl (and run cmds):
 
 ```sh
-$ node test/polka.js 
+$ USERS="username:password,john:doe" node test/polka.js 
 [rshell] for terminal access run: $ curl -sSNT. localhost:8080 -u username:password
 > Running on localhost:3000
 
@@ -29,7 +29,7 @@ const rshell = require('./..')({
     port,
     welcome:  `welcome..beep..boop..\n\n`,
     prompt: 'myapp $ ', 
-    userpass: ['admin:admin', 'john:doe'],  
+    userpass: (process.env.USERS||'').split(","),
     allowed: (req,res) => String(req.headers['user-agent']).match(/curl\//) && rshell.userpass.length, 
     // following params are supported by polka, or native http-module (not express)
     interactive: true,
@@ -61,7 +61,7 @@ polka()
 setInterval( () => console.error("test"), 1000)
 ```
 
-> for express, see test/express.js
+for express, see test/express.js (it needs `curl -sSNT. localhost:8080 -u user:pass | stdbuf -i0 -o0 -e0 tr -d '\000'`)
 
 > Now **only** host this locally, or through an SSL proxy, SSH tunnel or intranet.
 > Simple HTTP let's anybody see the username/password (oops!). 
