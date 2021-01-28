@@ -26,11 +26,11 @@ const polka = require('polka');
 const port = 8080
  
 const rshell = require('./..')({
-	port,
-	welcome:  `welcome..beep..boop..\n\n`,
+    port,
+    welcome:  `welcome..beep..boop..\n\n`,
     prompt: 'myapp $ ', 
-	userpass: ['admin:admin', 'john:doe'],  
-	allowed: (req,res) => String(req.headers['user-agent']).match(/curl\//) && rshell.userpass.length, 
+    userpass: ['admin:admin', 'john:doe'],  
+    allowed: (req,res) => String(req.headers['user-agent']).match(/curl\//) && rshell.userpass.length, 
     // following params are supported by polka, or native http-module (not express)
     interactive: true,
     oncmd: (i) => {
