@@ -61,7 +61,7 @@ listening at 8080
 [rshell] for terminal access run: $ curl -sSNT. localhost:8080 -u admin:admin
 ```
 
-# Meanwhile somewhere else 
+## Meanwhile somewhere else 
 
 ```javascript
 $ curl -sSNT. localhost:8080 -u admin:admin 
@@ -83,6 +83,10 @@ $ curl -sSNT. localhost:8080 -u admin:admin | grep err:
 01-28 15:45:47 err: this is an example error
 
 ```
+
+## Tips
+
+* craft commands using [dashdash](https://npmjs.org/dashdash)
 
 ## Test development
 
