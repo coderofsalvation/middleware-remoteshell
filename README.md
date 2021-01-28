@@ -3,11 +3,11 @@
 allow developers to tail logs remotely using curl (and run cmds):
 
 ```sh
-$ USERS="username:password,john:doe" node test/polka.js 
+$ node test/polka.js 
 [rshell] for terminal access run: $ curl -sSNT. localhost:8080 -u username:password
 > Running on localhost:3000
 
-$ curl -sSNT. localhost:8080 -u username:password
+$ curl <someurl>
 welcome..beep..boop
 
 myapp $ ls
@@ -29,9 +29,8 @@ const rshell = require('./..')({
     port,
     welcome:  `welcome..beep..boop..\n\n`,
     prompt: 'myapp $ ', 
-    userpass: (process.env.USERS||'').split(","),
+    userpass: (process.env.RSHELL_USERS||'').split(","),
     allowed: (req,res) => String(req.headers['user-agent']).match(/curl\//) && rshell.userpass.length, 
-    // following params are supported by polka, or native http-module (not express)
     interactive: true,
     oncmd: (i) => {
         let error = null
@@ -46,30 +45,20 @@ const rshell = require('./..')({
     }
 })
 rshell.start()
-
-polka()
-.use(rshell.middleware)
-.get('/', (req, res) => {
-    console.log(`~> Hello, ${req.hello}`);
-    res.end(`hello`)
-})
-.listen(port, err => {
-    if (err) throw err;
-    console.log(`> Running on localhost:3000`);
-});
-
-setInterval( () => console.error("test"), 1000)
+// see test/polka.js for the rest
 ```
 
-for express, see test/express.js (it needs `curl -sSNT. localhost:8080 -u user:pass | stdbuf -i0 -o0 -e0 tr -d '\000'`)
+> NOTE: Express needs: `curl -sSNT. localhost:8080 -u user:pass | stdbuf -i0 -o0 -e0 tr -d '\000'` (credits @mk-pmb)
 
-> Now **only** host this locally, or through an SSL proxy, SSH tunnel or intranet.
-> Simple HTTP let's anybody see the username/password (oops!). 
+## Host it somewhere 
+
+**Only** host this locally, or through an SSL proxy, SSH tunnel or intranet.<br>
+Simple HTTP allows password sniffing (oops!) . 
 
 ```bash
 $ RSHELL_USERS="admin:admin,john:doe" node app.js
 listening at 8080
-[rshell] for terminal access run: $ curl -sSNT. localhost:8080 -u username:password 
+[rshell] for terminal access run: $ curl -sSNT. localhost:8080 -u admin:admin
 ```
 
 # Meanwhile somewhere else 
