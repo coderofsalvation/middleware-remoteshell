@@ -8,7 +8,7 @@ allow developers to tail logs remotely using curl
 
 app.js:
 
-```
+```javascript
     const express = require('express')
     const app = express()
     const port = 8080
@@ -40,7 +40,7 @@ app.js:
 > Now **only** host this locally, or through an SSL proxy, SSH tunnel or intranet.
 > Simple HTTP let's anybody see the username/password (oops!). 
 
-```
+```bash
 $ RSHELL_USERS="admin:admin,john:doe" node app.js
 listening at 8080
 [rshell] for terminal access run: $ curl -sSNT. localhost:8080 -u username:password 
@@ -48,7 +48,7 @@ listening at 8080
 
 # Meanwhile somewhere else 
 
-```
+```javascript
 $ curl -sSNT. localhost:8080 -u admin:admin 
 welcome..beep..boop..
 
@@ -61,7 +61,7 @@ welcome..beep..boop..
 
 ```
 
-```
+```bash
 $ curl -sSNT. localhost:8080 -u admin:admin | grep err:
 01-28 15:45:45 err: this is an example error
 01-28 15:45:46 err: this is an example error
