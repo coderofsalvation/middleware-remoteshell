@@ -1,41 +1,67 @@
 ## express remoteshell
 
-allow developers to tail logs remotely using curl
+allow developers to tail logs remotely using curl (and run cmds):
 
-* **upcoming release**: remote shell
+```sh
+$ node test/polka.js 
+[rshell] for terminal access run: $ curl -sSNT. localhost:8080 -u username:password
+> Running on localhost:3000
+
+$ curl -sSNT. localhost:8080 -u username:password
+welcome..beep..boop
+
+myapp $ ls
+stdout
+stderr
+myapp $ stdout
+23-01 13:10:12 log: hello world from console.log
+```
 
 ## Usage
 
 app.js:
 
 ```javascript
-    const express = require('express')
-    const app = express()
-    const port = 8080
-    
-+   const rshell = require('./..')({
-+   	port,
-+   	welcome:  `welcome..beep..boop..\n\n`,
-+   	userpass: process.env.shellusers.split(","),
-+   	allowed: (req,res) => String(req.headers['user-agent']).match(/curl\//) && rshell.userpass.length
-+   })
-+   
-+   setInterval( () => {
-+   	console.log("test")
-+   	console.error("this is an example error")
-+   },1000)
-+   
-+   app.use( rshell.middleware )
-+   rshell.start()
-    
-    app.get('/', (req, res) => {
-      res.send('Hello World!')
-    })
-    
-    app.listen(port, () => {
-      console.log(`listening at http://localhost:${port}`)
-    })
+const polka = require('polka');
+const port = 8080
+ 
+const rshell = require('./..')({
+	port,
+	welcome:  `welcome..beep..boop..\n\n`,
+    prompt: 'myapp $ ', 
+	userpass: ['admin:admin', 'john:doe'],  
+	allowed: (req,res) => String(req.headers['user-agent']).match(/curl\//) && rshell.userpass.length, 
+    // following params are supported by polka, or native http-module (not express)
+    interactive: true,
+    oncmd: (i) => {
+        let error = null
+        let cmd   = i.cmd.trim()
+        if( cmd.match(/(stderr|stdout)/) ){
+            rshell.clients[i.id][cmd] = !rshell.clients[i.id][cmd]
+            if( cmd == 'stdout' ) return i.cb(error, 'stdout toggled')
+            if( cmd == 'stderr' ) return i.cb(error, 'stderr toggled')
+        }
+        if( cmd == 'ls'     ) return i.cb(error, 'stdout\nstderr')
+        i.cb(error, "unknown cmd: "+i.cmd)
+    }
+})
+rshell.start()
+
+polka()
+.use(rshell.middleware)
+.get('/', (req, res) => {
+    console.log(`~> Hello, ${req.hello}`);
+    res.end(`hello`)
+})
+.listen(port, err => {
+    if (err) throw err;
+    console.log(`> Running on localhost:3000`);
+});
+
+setInterval( () => console.error("test"), 1000)
 ```
+
+> for express, see test/express.js
 
 > Now **only** host this locally, or through an SSL proxy, SSH tunnel or intranet.
 > Simple HTTP let's anybody see the username/password (oops!). 
@@ -67,4 +93,12 @@ $ curl -sSNT. localhost:8080 -u admin:admin | grep err:
 01-28 15:45:46 err: this is an example error
 01-28 15:45:47 err: this is an example error
 
+```
+
+## Test development
+
+```javascript
+$ npm install polka express
+$ node test/express.js
+$ node test/polka.js
 ```
