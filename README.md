@@ -61,7 +61,7 @@ welcome..beep..boop..
 
 ```
 
-```bash
+```javascript
 $ curl -sSNT. localhost:8080 -u admin:admin | grep err:
 01-28 15:45:45 err: this is an example error
 01-28 15:45:46 err: this is an example error
