@@ -48,7 +48,7 @@ rshell.start()
 // see test/polka.js for the rest
 ```
 
-> NOTE: Express needs: `curl -sSNT. localhost:8080 -u user:pass | stdbuf -i0 -o0 -e0 tr -d '\000'` (credits @mk-pmb)
+> NOTE: Express needs: `curl -sSNT. localhost:8080 -u user:pass | stdbuf -i0 -o0 -e0 tr -d '\000'` (credits @mk-pmb) Probably you want to [create an alias](https://www.howtogeek.com/439736/how-to-create-aliases-and-shell-functions-on-linux/)
 
 ## Host it somewhere 
 
@@ -87,6 +87,7 @@ $ curl -sSNT. localhost:8080 -u admin:admin | grep err:
 ## Tips
 
 * craft commands using [dashdash](https://npmjs.org/dashdash)
+* create [an alias](https://www.howtogeek.com/439736/how-to-create-aliases-and-shell-functions-on-linux/) for the curl command
 
 ## Test development
 
