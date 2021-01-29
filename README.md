@@ -47,9 +47,6 @@ const rshell = require('./..')({
 rshell.start()
 // see test/polka.js for the rest
 ```
-
-> NOTE: Express needs: `curl -sSNT. localhost:8080 -u user:pass | stdbuf -i0 -o0 -e0 tr -d '\000'` (credits @mk-pmb) Probably you want to [create an alias](https://www.howtogeek.com/439736/how-to-create-aliases-and-shell-functions-on-linux/)
-
 ## Host it somewhere 
 
 **Only** host this locally, or through an SSL proxy, SSH tunnel or intranet.<br>
@@ -65,6 +62,9 @@ listening at 8080
 
 ```javascript
 $ curl -sSNT. localhost:8080 -u admin:admin 
+
+$ alias myapp="curl -sSNT. localhost:8080 -u admin:admin | stdbuf -i0 -o0 -e0 tr -d '\000'"
+
 welcome..beep..boop..
 
 01-28 15:45:45 log: test
@@ -87,7 +87,17 @@ $ curl -sSNT. localhost:8080 -u admin:admin | grep err:
 ## Tips
 
 * craft commands using [dashdash](https://npmjs.org/dashdash)
-* create [an alias](https://www.howtogeek.com/439736/how-to-create-aliases-and-shell-functions-on-linux/) for the curl command
+* create a bash-script to easily teleport into various apps:
+
+```
+#!/bin/bash
+myapp(){  curl -sSNT. myapp.foo.com -u admin | stdbuf -i0 -o0 -e0 tr -d '\000'" }
+appfoo(){ curl -sSNT. foo.com       -u admin | stdbuf -i0 -o0 -e0 tr -d '\000'" }
+
+[[ ! -n "$1" ]] && { echo "apps: \n$(cat $0 | fgrep '(){' | head -n-1 | sed 's/(){.*//g' )" && exit; }
+
+"$@"
+```
 
 ## Test development
 
@@ -96,3 +106,8 @@ $ npm install polka express
 $ node test/express.js
 $ node test/polka.js
 ```
+
+## Credits 
+
+* @TooTallNate for pointing out the curl trick
+* @mk-pmb for pointing out the `stdbuf` trick

@@ -31,7 +31,10 @@ polka()
 })
 .listen(port, err => {
     if (err) throw err;
-    console.log(`> Running on localhost:3000`);
+    console.log(`> Running on localhost:${port}`);
 });
 
-setInterval( () => console.error("test"), 1000)
+setInterval( () => {
+	console.error("test stderr")
+	console.log("test stdout")
+}, 1000)

@@ -49,9 +49,8 @@ module.exports = (opts) => {
 			// simultaneously in curl's single thread
 			var iv
             if( rshell.interactive ){
-                var c = new Buffer([0])
                 iv = setInterval(function () {
-                  if( enabled ) res.write(c)//String.fromCharCode(0))
+                  if( enabled ) res.write(String.fromCharCode(0))
                 }, 100)
             }
             
