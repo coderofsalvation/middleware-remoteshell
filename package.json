@@ -1,5 +1,5 @@
 {
-  "name": "express-remoteshell",
+  "name": "middleware-remoteshell",
   "version": "1.0.0",
   "description": "allow developers to tail logs remotely using curl (and run cmds) in express/polka/http",
   "main": "index.js",
