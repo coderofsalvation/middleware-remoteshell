@@ -1,7 +1,7 @@
 {
   "name": "express-remoteshell",
   "version": "1.0.0",
-  "description": "allow developers to tail logs remotely using curl",
+  "description": "allow developers to tail logs remotely using curl (and run cmds) in express/polka/http",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
