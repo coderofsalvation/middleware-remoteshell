@@ -25,7 +25,7 @@ app.js:
 const polka = require('polka');
 const port = 8080
  
-const rshell = require('./..')({
+const rshell = require('middleware-remoteshell')({
     port,
     welcome:  `welcome..beep..boop..\n\n`,
     prompt: 'myapp $ ', 
@@ -45,7 +45,9 @@ const rshell = require('./..')({
     }
 })
 rshell.start()
-// see test/polka.js for the rest
+
+app.use( rshell.middleware )
+// see test/polka.js or test/express.js for the full picture 
 ```
 ## Host it somewhere 
 
